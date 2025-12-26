@@ -21,11 +21,11 @@ func TestRegister_BC(t *testing.T) {
 			reg := &Registers{}
 			reg.SetBC(tt.setValue)
 
-			if reg.b != tt.expectedB {
-				t.Errorf("SetBC(0x%X): expected B=0x%X, got 0x%X", tt.setValue, tt.expectedB, reg.b)
+			if reg.B != tt.expectedB {
+				t.Errorf("SetBC(0x%X): expected B=0x%X, got 0x%X", tt.setValue, tt.expectedB, reg.B)
 			}
-			if reg.c != tt.expectedC {
-				t.Errorf("SetBC(0x%X): expected C=0x%X, got 0x%X", tt.setValue, tt.expectedC, reg.c)
+			if reg.C != tt.expectedC {
+				t.Errorf("SetBC(0x%X): expected C=0x%X, got 0x%X", tt.setValue, tt.expectedC, reg.C)
 			}
 			if got := reg.BC(); got != tt.setValue {
 				t.Errorf("BC(): expected 0x%X, got 0x%X", tt.setValue, got)
@@ -51,11 +51,11 @@ func TestRegister_DE(t *testing.T) {
 			reg := &Registers{}
 			reg.SetDE(tt.setValue)
 
-			if reg.d != tt.expectedD {
-				t.Errorf("SetDE(0x%X): expected D=0x%X, got 0x%X", tt.setValue, tt.expectedD, reg.d)
+			if reg.D != tt.expectedD {
+				t.Errorf("SetDE(0x%X): expected D=0x%X, got 0x%X", tt.setValue, tt.expectedD, reg.D)
 			}
-			if reg.e != tt.expectedE {
-				t.Errorf("SetDE(0x%X): expected E=0x%X, got 0x%X", tt.setValue, tt.expectedE, reg.e)
+			if reg.E != tt.expectedE {
+				t.Errorf("SetDE(0x%X): expected E=0x%X, got 0x%X", tt.setValue, tt.expectedE, reg.E)
 			}
 			if got := reg.DE(); got != tt.setValue {
 				t.Errorf("DE(): expected 0x%X, got 0x%X", tt.setValue, got)
@@ -81,11 +81,11 @@ func TestRegister_HL(t *testing.T) {
 			reg := &Registers{}
 			reg.SetHL(tt.setValue)
 
-			if reg.h != tt.expectedH {
-				t.Errorf("SetHL(0x%X): expected H=0x%X, got 0x%X", tt.setValue, tt.expectedH, reg.h)
+			if reg.H != tt.expectedH {
+				t.Errorf("SetHL(0x%X): expected H=0x%X, got 0x%X", tt.setValue, tt.expectedH, reg.H)
 			}
-			if reg.l != tt.expectedL {
-				t.Errorf("SetHL(0x%X): expected L=0x%X, got 0x%X", tt.setValue, tt.expectedL, reg.l)
+			if reg.L != tt.expectedL {
+				t.Errorf("SetHL(0x%X): expected L=0x%X, got 0x%X", tt.setValue, tt.expectedL, reg.L)
 			}
 			if got := reg.HL(); got != tt.setValue {
 				t.Errorf("HL(): expected 0x%X, got 0x%X", tt.setValue, got)
@@ -130,8 +130,8 @@ func TestRegister_AF(t *testing.T) {
 			reg := &Registers{}
 			reg.SetAF(tt.setValue)
 
-			if reg.a != tt.expectedA {
-				t.Errorf("SetAF(0x%X): expected A=0x%X, got 0x%X", tt.setValue, tt.expectedA, reg.a)
+			if reg.A != tt.expectedA {
+				t.Errorf("SetAF(0x%X): expected A=0x%X, got 0x%X", tt.setValue, tt.expectedA, reg.A)
 			}
 			if reg.f != tt.expectedF {
 				t.Errorf("SetAF(0x%X): expected F=0x%X, got 0x%X", tt.setValue, tt.expectedF, reg.f)
@@ -154,10 +154,10 @@ func TestRegister_Flags(t *testing.T) {
 		setter flagSet
 		getter flagOp
 	}{
-		{"Z", (*Registers).SetZ, (*Registers).Z},
-		{"N", (*Registers).SetN, (*Registers).N},
-		{"H", (*Registers).SetH, (*Registers).H},
-		{"Cy", (*Registers).SetCy, (*Registers).Cy},
+		{"Z", (*Registers).SetFlagZ, (*Registers).FlagZ},
+		{"N", (*Registers).SetFlagN, (*Registers).FlagN},
+		{"H", (*Registers).SetFlagH, (*Registers).FlagH},
+		{"Cy", (*Registers).SetFlagCy, (*Registers).FlagCy},
 	}
 
 	for _, tt := range tests {

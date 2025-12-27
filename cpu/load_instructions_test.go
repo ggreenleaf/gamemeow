@@ -77,7 +77,7 @@ func TestLoadInstructions(t *testing.T) {
 				c.registers.A = 0x77
 			},
 			run: func(c *CPU) int {
-				return c.storeHLReg8(c.registers.A)
+				return c.storeHLPtrReg8(c.registers.A)
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if m.data[0xC000] != 0x77 {
@@ -94,7 +94,7 @@ func TestLoadInstructions(t *testing.T) {
 				c.registers.A = 0xAA
 			},
 			run: func(c *CPU) int {
-				return c.storeHighImm16A(0x10) // LDH [$FF10], A
+				return c.storeHighImm8A(0x10) // LDH [$FF10], A
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if m.data[0xFF10] != 0xAA {
@@ -130,7 +130,7 @@ func TestLoadInstructions(t *testing.T) {
 				c.registers.A = 0x55
 			},
 			run: func(c *CPU) int {
-				return c.storeHLIncA()
+				return c.storeHLPtrIncA()
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if m.data[0xD000] != 0x55 {
@@ -269,7 +269,7 @@ func TestLoadInstructions(t *testing.T) {
 				m.data[0xC0F0] = 0x11
 			},
 			run: func(c *CPU) int {
-				return c.loadAHLInc()
+				return c.loadAHLPtrInc()
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if c.registers.A != 0x11 {
@@ -290,7 +290,7 @@ func TestLoadInstructions(t *testing.T) {
 				m.data[0xC0F0] = 0x22
 			},
 			run: func(c *CPU) int {
-				return c.loadAHLDec()
+				return c.loadAHLPtrDec()
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if c.registers.A != 0x22 {
@@ -311,7 +311,7 @@ func TestLoadInstructions(t *testing.T) {
 				c.registers.A = 0x33
 			},
 			run: func(c *CPU) int {
-				return c.storeHLDecA()
+				return c.storeHLPtrDecA()
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if m.data[0xD500] != 0x33 {
@@ -419,7 +419,7 @@ func TestLoadInstructions(t *testing.T) {
 				m.data[0xC200] = 0x99
 			},
 			run: func(c *CPU) int {
-				return c.loadReg8HL(func(v byte) { c.registers.B = v })
+				return c.loadReg8HLPtr(func(v byte) { c.registers.B = v })
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if c.registers.B != 0x99 {
@@ -436,7 +436,7 @@ func TestLoadInstructions(t *testing.T) {
 				c.registers.SetHL(0xC300)
 			},
 			run: func(c *CPU) int {
-				return c.storeHLImm8(0x33)
+				return c.storeHLPtrImm8(0x33)
 			},
 			expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 				if m.data[0xC300] != 0x33 {

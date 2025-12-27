@@ -21,7 +21,7 @@ package cpu
 // adc8AReg8 handles ADC A, r8
 // Add the value in r8 plus the carry flag to A.
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) adc8AReg8(srcGet func() byte) int {
+func (c *CPU) adcAReg8(srcGet func() byte) int {
 	a := c.registers.A
 	value := srcGet()
 	cy := byte(c.registers.FlagCyBit())
@@ -39,7 +39,7 @@ func (c *CPU) adc8AReg8(srcGet func() byte) int {
 // adc8AHL handles ADC A, [HL]
 // Add the byte pointed to by HL plus the carry flag To A
 // cycles 2 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) adc8AHL() int {
+func (c *CPU) adcAHLPtr() int {
 	value := c.bus.Read(c.registers.HL())
 	a := c.registers.A
 	cy := byte(c.registers.FlagCyBit())
@@ -57,7 +57,7 @@ func (c *CPU) adc8AHL() int {
 // adc8AImm8 handles ADC A, n8
 // Add the value n8 plus the carry flag to A
 // cycles 2 | bytes 2 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) adc8AImm8(srcVal byte) int {
+func (c *CPU) adcAImm8(srcVal byte) int {
 	a := c.registers.A
 	cy := byte(c.registers.FlagCyBit())
 	res16 := uint16(a) + uint16(srcVal) + uint16(cy)
@@ -74,7 +74,7 @@ func (c *CPU) adc8AImm8(srcVal byte) int {
 // add8AReg8 handles ADD A, r8
 // Add the value in r8 to A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) add8AReg8(srcGet func() byte) int {
+func (c *CPU) addAReg8(srcGet func() byte) int {
 	a := c.registers.A
 	value := srcGet()
 	res16 := uint16(a) + uint16(value)
@@ -92,7 +92,7 @@ func (c *CPU) add8AReg8(srcGet func() byte) int {
 // add8AHL handles ADD A, [HL]
 // Add the byte pointed to by HL to A.
 // cycles 2 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) add8AHL() int {
+func (c *CPU) addAHLPtr() int {
 	a := c.registers.A
 	value := c.bus.Read(c.registers.HL())
 	res16 := uint16(a) + uint16(value)
@@ -109,7 +109,7 @@ func (c *CPU) add8AHL() int {
 // add8AImm8 handles ADD A, n8
 // Add the value n8 to A
 // cycles 2 | bytes 2 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) add8AImm8(srcVal byte) int {
+func (c *CPU) addAImm8(srcVal byte) int {
 	a := c.registers.A
 	res16 := uint16(a) + uint16(srcVal)
 	hCarry := (a&0x0F)+(srcVal&0x0F) > 0x0F
@@ -125,7 +125,7 @@ func (c *CPU) add8AImm8(srcVal byte) int {
 // add16HLReg16 handles ADD HL, r16
 // Add the value in r16 to HL
 // cycles 2 | bytes 1 | flags N 0, H (set if bit 11 overflow), C (set if bit 15 overflow)
-func (c *CPU) add16HLReg16(srcGet func() uint16) int {
+func (c *CPU) addHLReg16(srcGet func() uint16) int {
 	value := srcGet()
 	hl := c.registers.HL()
 	res32 := uint32(value) + uint32(hl)
@@ -141,7 +141,7 @@ func (c *CPU) add16HLReg16(srcGet func() uint16) int {
 // add16HLSP handles ADD HL, SP
 // add the value in SP to HL
 // cycles 2 | bytes 1 | flags N 0, H (set if bit 11 overflow), C (set if bit 15 overflow)
-func (c *CPU) add16HLSP() int {
+func (c *CPU) addHLSP() int {
 	hl := c.registers.HL()
 	sp := c.registers.SP
 	res32 := uint32(sp) + uint32(hl)
@@ -158,7 +158,7 @@ func (c *CPU) add16HLSP() int {
 // cp8AHL handles CP A, [HL]
 // Compare A with the byte pointed to by HL (subtract [HL] from A but don't store result)
 // cycles 2 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) cp8AHL() int {
+func (c *CPU) cpAHLPtr() int {
 	a := c.registers.A
 	value := c.bus.Read(c.registers.HL())
 	hBorrow := (a & 0x0F) < (value & 0x0F)
@@ -175,7 +175,7 @@ func (c *CPU) cp8AHL() int {
 // cp8AImm8 handles CP A, n8
 // Compare A with the value n8 (subtract n8 from A but don't store result)
 // cycles 2 | bytes 2 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) cp8AImm8(srcVal byte) int {
+func (c *CPU) cpAImm8(srcVal byte) int {
 	a := c.registers.A
 	hBorrow := (a & 0x0F) < (srcVal & 0x0F)
 	cyBorrow := a < srcVal
@@ -191,7 +191,7 @@ func (c *CPU) cp8AImm8(srcVal byte) int {
 // cp8AReg8 handles CP A, r8
 // Compare A with the value in r8 (subtract r8 from A but don't store result)
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) cp8AReg8(srcGet func() byte) int {
+func (c *CPU) cpAReg8(srcGet func() byte) int {
 	a := c.registers.A
 	value := srcGet()
 	hBorrow := (a & 0x0F) < (value & 0x0F)
@@ -207,7 +207,7 @@ func (c *CPU) cp8AReg8(srcGet func() byte) int {
 // dec16Reg16 handles DEC r16
 // Decrement the value in r16
 // cycles 2 | bytes 1 | flags none affected
-func (c *CPU) dec16Reg16(dst func(uint16), srcGet func() uint16) int {
+func (c *CPU) decReg16(dst func(uint16), srcGet func() uint16) int {
 	value := srcGet()
 	value--
 	dst(value)
@@ -217,7 +217,7 @@ func (c *CPU) dec16Reg16(dst func(uint16), srcGet func() uint16) int {
 // dec8HL handles DEC [HL]
 // Decrement the byte pointed to by HL
 // cycles 3 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4)
-func (c *CPU) dec8HL() int {
+func (c *CPU) decHLPtr() int {
 	addr := c.registers.HL()
 	value := c.bus.Read(addr)
 	res := value - 1
@@ -233,7 +233,7 @@ func (c *CPU) dec8HL() int {
 // dec8Reg8 handles DEC r8
 // Decrement the value in r8
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4)
-func (c *CPU) dec8Reg8(dst func(byte), srcGet func() byte) int {
+func (c *CPU) decReg8(dst func(byte), srcGet func() byte) int {
 	value := srcGet()
 
 	res := value - 1
@@ -249,7 +249,7 @@ func (c *CPU) dec8Reg8(dst func(byte), srcGet func() byte) int {
 // inc16Reg16 handles INC r16
 // Increment the value in r16
 // cycles 2 | bytes 1 | flags none affected
-func (c *CPU) inc16Reg16(dst func(uint16), srcGet func() uint16) int {
+func (c *CPU) incReg16(dst func(uint16), srcGet func() uint16) int {
 	value := srcGet()
 	value++
 	dst(value)
@@ -259,7 +259,7 @@ func (c *CPU) inc16Reg16(dst func(uint16), srcGet func() uint16) int {
 // inc8HL handles INC [HL]
 // Increment the byte pointed to by HL
 // cycles 3 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow)
-func (c *CPU) inc8HL() int {
+func (c *CPU) incHLPtr() int {
 	addr := c.registers.HL()
 	value := c.bus.Read(addr)
 
@@ -277,7 +277,7 @@ func (c *CPU) inc8HL() int {
 // inc8Reg8 handles INC r8
 // Increment the value in r8
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow)
-func (c *CPU) inc8Reg8(dst func(byte), srcGet func() byte) int {
+func (c *CPU) incReg8(dst func(byte), srcGet func() byte) int {
 
 	value := srcGet()
 
@@ -295,7 +295,7 @@ func (c *CPU) inc8Reg8(dst func(byte), srcGet func() byte) int {
 // sbc8AHL handles SBC A, [HL]
 // Subtract the byte pointed to by HL plus the carry flag from A
 // cycles 2 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src + cy))
-func (c *CPU) sbc8AHL() int {
+func (c *CPU) sbcAHLPtr() int {
 	value := int(c.bus.Read(c.registers.HL()))
 	cy := int(c.registers.FlagCyBit())
 	a := int(c.registers.A)
@@ -318,7 +318,7 @@ func (c *CPU) sbc8AHL() int {
 // sbc8AImm8 handles SBC A, n8
 // Subtract the value n8 plus the carry flag from A
 // cycles 2 | bytes 2 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src + cy))
-func (c *CPU) sbc8AImm8(srcVal byte) int {
+func (c *CPU) sbcAImm8(srcVal byte) int {
 	value := int(srcVal)
 	cy := int(c.registers.FlagCyBit())
 	a := int(c.registers.A)
@@ -341,7 +341,7 @@ func (c *CPU) sbc8AImm8(srcVal byte) int {
 // sbc8AReg8 handles SBC A, r8
 // Subtract the value in r8 plus the carry flag from A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src + cy))
-func (c *CPU) sbc8AReg8(srcGet func() byte) int {
+func (c *CPU) sbcAReg8(srcGet func() byte) int {
 	value := int(srcGet())
 	cy := int(c.registers.FlagCyBit())
 	a := int(c.registers.A)
@@ -364,7 +364,7 @@ func (c *CPU) sbc8AReg8(srcGet func() byte) int {
 // sub8AHL handles SUB A, [HL]
 // Subtract the byte pointed to by HL from A
 // cycles 2 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) sub8AHL() int {
+func (c *CPU) subAHLPtr() int {
 
 	value := int(c.bus.Read(c.registers.HL()))
 	a := int(c.registers.A)
@@ -386,7 +386,7 @@ func (c *CPU) sub8AHL() int {
 // sub8AImm8 handles SUB A, n8
 // Subtract the value n8 from A
 // cycles 2 | bytes 2 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) sub8AImm8(srcVal byte) int {
+func (c *CPU) subAImm8(srcVal byte) int {
 
 	value := int(srcVal)
 	a := int(c.registers.A)
@@ -409,7 +409,7 @@ func (c *CPU) sub8AImm8(srcVal byte) int {
 // sub8AReg8 handles SUB A, r8
 // Subtract the value in r8 from A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) sub8AReg8(srcGet func() byte) int {
+func (c *CPU) subAReg8(srcGet func() byte) int {
 	value := int(srcGet())
 	a := int(c.registers.A)
 

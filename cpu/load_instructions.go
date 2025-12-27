@@ -42,7 +42,7 @@ func (c *CPU) loadReg16Imm16(dst func(uint16), srcVal uint16) int {
 // storeHLReg8 handles LD [HL], r8
 // Copy the value in register r8 into the byte pointed to by HL.
 // cycles 2 | bytes 1 | flags None affected.
-func (c *CPU) storeHLReg8(srcVal byte) int {
+func (c *CPU) storeHLPtrReg8(srcVal byte) int {
 	c.bus.Write(c.registers.HL(), srcVal)
 	return 2
 }
@@ -50,7 +50,7 @@ func (c *CPU) storeHLReg8(srcVal byte) int {
 // storeHLImm8 handles LD [HL], n8
 // Copy the value n8 into the byte pointed to by HL.
 // cycles 3 | bytes 2 | flags None affected.
-func (c *CPU) storeHLImm8(srcVal byte) int {
+func (c *CPU) storeHLPtrImm8(srcVal byte) int {
 	c.bus.Write(c.registers.HL(), srcVal)
 	return 3
 }
@@ -58,7 +58,7 @@ func (c *CPU) storeHLImm8(srcVal byte) int {
 // loadReg8HL handles LD r8, [HL]
 // Copy the value pointed to by HL into register r8.
 // cycles 2 | bytes 1 | flags None affected.
-func (c *CPU) loadReg8HL(dst func(byte)) int {
+func (c *CPU) loadReg8HLPtr(dst func(byte)) int {
 	dst(c.bus.Read(c.registers.HL()))
 	return 2
 }
@@ -82,7 +82,7 @@ func (c *CPU) storeImm16A(targetAddr uint16) int {
 // storeHighImm16A handles LDH [n16], A
 // Copy the value in register A into the byte at address n16, provided the address is between 0xFF00 and 0xFFFF
 // cycles 3 | bytes 2 | flags none affected
-func (c *CPU) storeHighImm16A(offset byte) int {
+func (c *CPU) storeHighImm8A(offset byte) int {
 	value := c.registers.A
 	addr := uint16(offset) + 0xFF00
 	c.bus.Write(addr, value)
@@ -136,7 +136,7 @@ func (c *CPU) loadHighAC() int {
 // storeHLIncA handles LD [HLI], A
 // Copy the value in register A into the byte pointed by HL and increment HL afterwards
 // cycles 2 | bytes 1 | flags none affected
-func (c *CPU) storeHLIncA() int {
+func (c *CPU) storeHLPtrIncA() int {
 	value := c.registers.A
 	addr := c.registers.HL()
 	c.bus.Write(addr, value)
@@ -147,7 +147,7 @@ func (c *CPU) storeHLIncA() int {
 // storeHLDecA handles LD [HLD], A
 // Copy the value in register A into the byte pointed by HL and decrement HL afterwards
 // cycles 2 | bytes 1 | flags none affected
-func (c *CPU) storeHLDecA() int {
+func (c *CPU) storeHLPtrDecA() int {
 	value := c.registers.A
 	addr := c.registers.HL()
 	c.bus.Write(addr, value)
@@ -158,7 +158,7 @@ func (c *CPU) storeHLDecA() int {
 // loadAHLDec handles LD A, [HLD]
 // Copy the byte pointed to by HL into register A, and decrement HL afterwards
 // cycles 2 | bytes 1 | flags none affected
-func (c *CPU) loadAHLDec() int {
+func (c *CPU) loadAHLPtrDec() int {
 	value := c.bus.Read(c.registers.HL())
 	c.registers.A = value
 	c.registers.SetHL(c.registers.HL() - 1)
@@ -168,7 +168,7 @@ func (c *CPU) loadAHLDec() int {
 // loadAHLInc handles LD A, [HLI]
 // Copy the byte pointed to by HL into register A, and increment HL afterwards
 // cycles 2 | bytes 1 | flags none affected
-func (c *CPU) loadAHLInc() int {
+func (c *CPU) loadAHLPtrInc() int {
 	value := c.bus.Read(c.registers.HL())
 	c.registers.A = value
 	c.registers.SetHL(c.registers.HL() + 1)

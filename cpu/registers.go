@@ -93,3 +93,10 @@ func (r *Registers) setFlag(flag byte, value bool) {
 		r.f &^= flag
 	}
 }
+
+func (r *Registers) FlagCyBit() uint16 {
+	if r.FlagCy() {
+		return 1
+	}
+	return 0
+}

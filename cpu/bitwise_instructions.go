@@ -2,11 +2,12 @@ package cpu
 
 // Naming Mechanism & Nomenclature:
 // -----------------------------
-// op    = bitwise operation (AND, XOR, OR)
-// A     = Implicit target for bitwise operations
-// Reg8  = Register source
-// Imm8  = Immediate value source
-// HLPtr = Memory address pointed to by HL source
+// op    		= bitwise operation (AND, XOR, OR, etc...)
+// A     		= Implicit target for bitwise operations
+// Reg8  		= Register source
+// Imm8  		= Immediate value source
+// HLPtr 		= Memory address pointed to by HL source
+// bitIndex = bit position 0 beeing right most bit 7 being the leftmost bit
 //
 // Naming Pattern Examples:
 // andAReg8(srcGet func() byte) int
@@ -166,4 +167,77 @@ func (c *CPU) xorAImm8(srcVal byte) int {
 	c.registers.SetFlagH(false)
 	c.registers.SetFlagCy(false)
 	return 2
+}
+
+// bitIndexImm8 handles BIT u3, r8
+// Test bit u3 in register r8, set the zero flag if bit not set
+// cycles 2 | bytes 2 | flags Z (set if selected bit is 0), n 0, h 1
+func (c *CPU) bitIndexImm8(bitIndex byte, srcGet func() byte) int {
+	value := srcGet()
+
+	isZero := (value & (1 << bitIndex)) == 0
+
+	c.registers.SetFlagZ(isZero)
+	c.registers.SetFlagN(false)
+	c.registers.SetFlagH(true)
+
+	return 2
+}
+
+// bitIndexHLPtr handles BIT u3, [HL]
+// Test bit u3 in the byte pointed by HL, set the zero flag if bit not set
+// cycles 3 | bytes 2 | flags Z (set if selected bit is 0), n 0, h 1
+func (c *CPU) bitIndexHlPtr(bitIndex byte) int {
+	addr := c.registers.HL()
+	value := c.bus.Read(addr)
+
+	isZero := (value & (1 << bitIndex)) == 0
+
+	c.registers.SetFlagZ(isZero)
+	c.registers.SetFlagN(false)
+	c.registers.SetFlagH(true)
+
+	return 3
+}
+
+// resIndexReg8 handles RES u3, r8
+// Set bit ue in register r8 to 0. Bit 0 is the right most one, bit 7 the left most one
+// cycles 2 | bytes 2 | flags none affected
+func (c *CPU) resIndexReg8(bitIndex byte, srcGet func() byte, dst func(byte)) int {
+	value := srcGet()
+	res := value &^ (1 << bitIndex)
+	dst(res)
+	return 2
+}
+
+// resIndexHLPtr handles RES u3, [HL]
+// Set the bit u3 in teh byte pointed by HL to 0. Bit 0 is the rightmost one, bit 7 is the left most one
+// cycles 4 | bytes 2 | flags none affected
+func (c *CPU) resIndexHLPtr(bitIndex byte) int {
+	addr := c.registers.HL()
+	value := c.bus.Read(addr)
+	res := value &^ (1 << bitIndex)
+	c.bus.Write(addr, res)
+	return 4
+}
+
+// setIndexReg8 handles SET u3, r8
+// Set the bit u3 in register r8 to 1. Bit 0 is the right most one, bit 7 the leftmost one
+// cycles 2 | bytes 2 | flags none affected
+func (c *CPU) setIndexReg8(bitIndex byte, srcGet func() byte, dst func(byte)) int {
+	value := srcGet()
+	res := value | (1 << bitIndex)
+	dst(res)
+	return 2
+}
+
+// setIndexReg8 handles SET u3, r8
+// set the bit u3 in the byte pointed by HL to 1. BIt 0 is teh rightmost one, b it 7 the leftmost one
+// cycles 4 | bytes 2 | flags none affected
+func (c *CPU) setIndexHLPtr(bitIndex byte) int {
+	addr := c.registers.HL()
+	value := c.bus.Read(addr)
+	res := value | (1 << bitIndex)
+	c.bus.Write(addr, res)
+	return 4
 }

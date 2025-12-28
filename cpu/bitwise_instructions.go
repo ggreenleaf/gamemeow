@@ -18,9 +18,9 @@ package cpu
 // andAReg8 handles AND A, r8
 // Set A to the bitwise AND between the value in r8 and A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H 1, C 0
-func (c *CPU) andAReg8(srcGet func() byte) int {
+func (c *CPU) andAReg8(srcVal byte) int {
 	a := c.registers.A
-	value := srcGet()
+	value := srcVal
 	res := a & value
 	c.registers.A = res
 	c.registers.SetFlagZ(res == 0)
@@ -76,9 +76,9 @@ func (c *CPU) cpl() int {
 // orAReg8 handles OR A, r8
 // Set A to the bitwise OR between the value in r8 and A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H 0, C 0
-func (c *CPU) orAReg8(srcGet func() byte) int {
+func (c *CPU) orAReg8(srcVal byte) int {
 	a := c.registers.A
-	value := srcGet()
+	value := srcVal
 	res := a | value
 	c.registers.A = res
 	c.registers.SetFlagZ(res == 0)
@@ -124,9 +124,9 @@ func (c *CPU) orAImm8(srcVal byte) int {
 // xorAReg8 handles XOR A, r8
 // Set A to the bitwise XOR between the value in r8 and A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H 0, C 0
-func (c *CPU) xorAReg8(srcGet func() byte) int {
+func (c *CPU) xorAReg8(srcVal byte) int {
 	a := c.registers.A
-	value := srcGet()
+	value := srcVal
 	res := a ^ value
 	c.registers.A = res
 	c.registers.SetFlagZ(res == 0)
@@ -172,8 +172,8 @@ func (c *CPU) xorAImm8(srcVal byte) int {
 // bitIndexImm8 handles BIT u3, r8
 // Test bit u3 in register r8, set the zero flag if bit not set
 // cycles 2 | bytes 2 | flags Z (set if selected bit is 0), n 0, h 1
-func (c *CPU) bitIndexImm8(bitIndex byte, srcGet func() byte) int {
-	value := srcGet()
+func (c *CPU) bitIndexImm8(bitIndex byte, srcVal byte) int {
+	value := srcVal
 
 	isZero := (value & (1 << bitIndex)) == 0
 
@@ -203,10 +203,10 @@ func (c *CPU) bitIndexHlPtr(bitIndex byte) int {
 // resIndexReg8 handles RES u3, r8
 // Set bit ue in register r8 to 0. Bit 0 is the right most one, bit 7 the left most one
 // cycles 2 | bytes 2 | flags none affected
-func (c *CPU) resIndexReg8(bitIndex byte, srcGet func() byte, dst func(byte)) int {
-	value := srcGet()
+func (c *CPU) resIndexReg8(bitIndex byte, reg *byte) int {
+	value := *reg
 	res := value &^ (1 << bitIndex)
-	dst(res)
+	*reg = res
 	return 2
 }
 
@@ -224,10 +224,10 @@ func (c *CPU) resIndexHLPtr(bitIndex byte) int {
 // setIndexReg8 handles SET u3, r8
 // Set the bit u3 in register r8 to 1. Bit 0 is the right most one, bit 7 the leftmost one
 // cycles 2 | bytes 2 | flags none affected
-func (c *CPU) setIndexReg8(bitIndex byte, srcGet func() byte, dst func(byte)) int {
-	value := srcGet()
+func (c *CPU) setIndexReg8(bitIndex byte, reg *byte) int {
+	value := *reg
 	res := value | (1 << bitIndex)
-	dst(res)
+	*reg = res
 	return 2
 }
 

@@ -37,7 +37,7 @@ func TestLoadInstructions(t *testing.T) {
 						c.registers.B = 0x42
 					},
 					run: func(c *CPU) int {
-						return c.loadReg8Reg8(func(v byte) { c.registers.A = v }, func() byte { return c.registers.B })
+						return c.loadReg8Reg8(&c.registers.A, c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x42 {
@@ -52,7 +52,7 @@ func TestLoadInstructions(t *testing.T) {
 					name:  "LD B, n8",
 					setup: func(c *CPU, m *mockMemory) {}, // No setup needed
 					run: func(c *CPU) int {
-						return c.loadReg8Imm8(func(v byte) { c.registers.B = v }, 0x99)
+						return c.loadReg8Imm8(&c.registers.B, 0x99)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.B != 0x99 {
@@ -69,7 +69,7 @@ func TestLoadInstructions(t *testing.T) {
 						c.registers.C = 0xAA
 					},
 					run: func(c *CPU) int {
-						return c.loadReg8Reg8(func(v byte) { c.registers.C = v }, func() byte { return c.registers.C })
+						return c.loadReg8Reg8(&c.registers.C, c.registers.C)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.C != 0xAA {
@@ -84,7 +84,7 @@ func TestLoadInstructions(t *testing.T) {
 					name:  "LD E, n8",
 					setup: func(c *CPU, m *mockMemory) {},
 					run: func(c *CPU) int {
-						return c.loadReg8Imm8(func(v byte) { c.registers.E = v }, 0x12)
+						return c.loadReg8Imm8(&c.registers.E, 0x12)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.E != 0x12 {
@@ -207,7 +207,7 @@ func TestLoadInstructions(t *testing.T) {
 						m.data[0xC200] = 0x99
 					},
 					run: func(c *CPU) int {
-						return c.loadReg8HLPtr(func(v byte) { c.registers.B = v })
+						return c.loadReg8HLPtr(&c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.B != 0x99 {

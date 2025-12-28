@@ -18,16 +18,16 @@ package cpu
 // Storing a register into itself is a no-op; however, some Game Boy emulators
 // interpret LD B,B as a breakpoint, or LD D,D as a debug message (such as BGB).
 // cycles 1 | bytes 1 | flags None affected.
-func (c *CPU) loadReg8Reg8(dst func(byte), srcGet func() byte) int {
-	dst(srcGet())
+func (c *CPU) loadReg8Reg8(dst *byte, srcVal byte) int {
+	*dst = srcVal
 	return 1
 }
 
 // loadReg8Imm8 handles LD r8, n8
 // Copy the value n8 into register r8.
 // cycles 2 | bytes 2 | flags None affected.
-func (c *CPU) loadReg8Imm8(dst func(byte), srcVal byte) int {
-	dst(srcVal)
+func (c *CPU) loadReg8Imm8(dst *byte, srcVal byte) int {
+	*dst = srcVal
 	return 2
 }
 
@@ -58,8 +58,8 @@ func (c *CPU) storeHLPtrImm8(srcVal byte) int {
 // loadReg8HL handles LD r8, [HL]
 // Copy the value pointed to by HL into register r8.
 // cycles 2 | bytes 1 | flags None affected.
-func (c *CPU) loadReg8HLPtr(dst func(byte)) int {
-	dst(c.bus.Read(c.registers.HL()))
+func (c *CPU) loadReg8HLPtr(dst *byte) int {
+	*dst = c.bus.Read(c.registers.HL())
 	return 2
 }
 

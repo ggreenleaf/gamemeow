@@ -26,7 +26,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.B = 0xF0
 					},
 					run: func(c *CPU) int {
-						return c.andAReg8(func() byte { return c.registers.B })
+						return c.andAReg8(c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x00 {
@@ -125,7 +125,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.A = 0xFF
 					},
 					run: func(c *CPU) int {
-						return c.xorAReg8(func() byte { return c.registers.A })
+						return c.xorAReg8(c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x00 {
@@ -213,7 +213,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.B = 0x0F
 					},
 					run: func(c *CPU) int {
-						return c.orAReg8(func() byte { return c.registers.B })
+						return c.orAReg8(c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0xFF {
@@ -339,7 +339,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.A = 0xFD // 1111 1101 (Bit 1 is 0)
 					},
 					run: func(c *CPU) int {
-						return c.bitIndexImm8(1, func() byte { return c.registers.A })
+						return c.bitIndexImm8(1, c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if !c.registers.FlagZ() {
@@ -386,7 +386,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.A = 0x01
 					},
 					run: func(c *CPU) int {
-						return c.bitIndexImm8(0, func() byte { return c.registers.A })
+						return c.bitIndexImm8(0, c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.FlagZ() {
@@ -403,7 +403,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.A = 0x7F
 					},
 					run: func(c *CPU) int {
-						return c.bitIndexImm8(7, func() byte { return c.registers.A })
+						return c.bitIndexImm8(7, c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if !c.registers.FlagZ() {
@@ -422,7 +422,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.A = 0xFF // 1111 1111
 					},
 					run: func(c *CPU) int {
-						return c.resIndexReg8(3, func() byte { return c.registers.A }, func(v byte) { c.registers.A = v })
+						return c.resIndexReg8(3, &c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0xF7 { // 1111 0111
@@ -458,7 +458,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.B = 0x00 // 0000 0000
 					},
 					run: func(c *CPU) int {
-						return c.setIndexReg8(4, func() byte { return c.registers.B }, func(v byte) { c.registers.B = v })
+						return c.setIndexReg8(4, &c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.B != 0x10 { // 0001 0000
@@ -494,7 +494,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.C = 0xFE // 1111 1110
 					},
 					run: func(c *CPU) int {
-						return c.setIndexReg8(0, func() byte { return c.registers.C }, func(v byte) { c.registers.C = v })
+						return c.setIndexReg8(0, &c.registers.C)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.C != 0xFF {
@@ -508,7 +508,7 @@ func TestBitwiseInstructions(t *testing.T) {
 						c.registers.D = 0xFF
 					},
 					run: func(c *CPU) int {
-						return c.resIndexReg8(7, func() byte { return c.registers.D }, func(v byte) { c.registers.D = v })
+						return c.resIndexReg8(7, &c.registers.D)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.D != 0x7F {

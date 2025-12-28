@@ -26,7 +26,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.B = 0x20
 					},
 					run: func(c *CPU) int {
-						return c.addAReg8(func() byte { return c.registers.B })
+						return c.addAReg8(c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x30 {
@@ -47,7 +47,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.C = 0x01
 					},
 					run: func(c *CPU) int {
-						return c.addAReg8(func() byte { return c.registers.C })
+						return c.addAReg8(c.registers.C)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x10 {
@@ -68,7 +68,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.D = 0x80
 					},
 					run: func(c *CPU) int {
-						return c.addAReg8(func() byte { return c.registers.D })
+						return c.addAReg8(c.registers.D)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x00 {
@@ -124,7 +124,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.A = 0x40
 					},
 					run: func(c *CPU) int {
-						return c.addAReg8(func() byte { return c.registers.A })
+						return c.addAReg8(c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x80 {
@@ -141,7 +141,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.A = 0x80
 					},
 					run: func(c *CPU) int {
-						return c.addAReg8(func() byte { return c.registers.A })
+						return c.addAReg8(c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x00 {
@@ -168,7 +168,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.SetFlagCy(true)
 					},
 					run: func(c *CPU) int {
-						return c.adcAReg8(func() byte { return c.registers.E })
+						return c.adcAReg8(c.registers.E)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x03 { // 1 + 1 + 1
@@ -187,7 +187,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.SetFlagCy(true)
 					},
 					run: func(c *CPU) int {
-						return c.adcAReg8(func() byte { return c.registers.H })
+						return c.adcAReg8(c.registers.H)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x10 { // 0xE + 0x1 + 0x1 = 0x10
@@ -252,7 +252,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.SetFlagCy(true)
 					},
 					run: func(c *CPU) int {
-						return c.sbcAReg8(func() byte { return c.registers.B })
+						return c.sbcAReg8(c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x0E { // 0x10 - 0x01 - 1 = 0x0E
@@ -307,7 +307,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.B = 0x10
 					},
 					run: func(c *CPU) int {
-						return c.subAReg8(func() byte { return c.registers.B })
+						return c.subAReg8(c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x20 {
@@ -328,7 +328,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.C = 0x02
 					},
 					run: func(c *CPU) int {
-						return c.subAReg8(func() byte { return c.registers.C })
+						return c.subAReg8(c.registers.C)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0xFF {
@@ -381,7 +381,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.A = 0xAA
 					},
 					run: func(c *CPU) int {
-						return c.subAReg8(func() byte { return c.registers.A })
+						return c.subAReg8(c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x00 {
@@ -407,7 +407,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.L = 0x42
 					},
 					run: func(c *CPU) int {
-						return c.cpAReg8(func() byte { return c.registers.L })
+						return c.cpAReg8(c.registers.L)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.A != 0x42 {
@@ -460,7 +460,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.A = 0x99
 					},
 					run: func(c *CPU) int {
-						return c.cpAReg8(func() byte { return c.registers.A })
+						return c.cpAReg8(c.registers.A)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if !c.registers.FlagZ() {
@@ -482,7 +482,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.B = 0x0F
 					},
 					run: func(c *CPU) int {
-						return c.incReg8(func(v byte) { c.registers.B = v }, func() byte { return c.registers.B })
+						return c.incReg8(&c.registers.B)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.B != 0x10 {
@@ -522,7 +522,7 @@ func TestArithmeticInstructions(t *testing.T) {
 						c.registers.C = 0x10
 					},
 					run: func(c *CPU) int {
-						return c.decReg8(func(v byte) { c.registers.C = v }, func() byte { return c.registers.C })
+						return c.decReg8(&c.registers.C)
 					},
 					expected: func(t *testing.T, c *CPU, m *mockMemory, cycles int) {
 						if c.registers.C != 0x0F {

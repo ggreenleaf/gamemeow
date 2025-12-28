@@ -21,9 +21,9 @@ package cpu
 // adc8AReg8 handles ADC A, r8
 // Add the value in r8 plus the carry flag to A.
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) adcAReg8(srcGet func() byte) int {
+func (c *CPU) adcAReg8(srcVal byte) int {
 	a := c.registers.A
-	value := srcGet()
+	value := srcVal
 	cy := byte(c.registers.FlagCyBit())
 	res16 := uint16(a) + uint16(value) + uint16(cy)
 	hCarry := (a&0x0F)+(value&0x0F)+cy > 0x0F
@@ -74,9 +74,9 @@ func (c *CPU) adcAImm8(srcVal byte) int {
 // add8AReg8 handles ADD A, r8
 // Add the value in r8 to A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow), C (Set if bit 7 overflow)
-func (c *CPU) addAReg8(srcGet func() byte) int {
+func (c *CPU) addAReg8(srcVal byte) int {
 	a := c.registers.A
-	value := srcGet()
+	value := srcVal
 	res16 := uint16(a) + uint16(value)
 	hCarry := (a&0x0F)+(value&0x0F) > 0x0F
 	cyCarry := res16 > 0xFF
@@ -191,9 +191,9 @@ func (c *CPU) cpAImm8(srcVal byte) int {
 // cp8AReg8 handles CP A, r8
 // Compare A with the value in r8 (subtract r8 from A but don't store result)
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) cpAReg8(srcGet func() byte) int {
+func (c *CPU) cpAReg8(srcVal byte) int {
 	a := c.registers.A
-	value := srcGet()
+	value := srcVal
 	hBorrow := (a & 0x0F) < (value & 0x0F)
 	cyBorrow := a < value
 	res := a - value
@@ -233,8 +233,8 @@ func (c *CPU) decHLPtr() int {
 // dec8Reg8 handles DEC r8
 // Decrement the value in r8
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4)
-func (c *CPU) decReg8(dst func(byte), srcGet func() byte) int {
-	value := srcGet()
+func (c *CPU) decReg8(reg *byte) int {
+	value := *reg
 
 	res := value - 1
 	hBorrow := (value & 0x0F) == 0
@@ -242,7 +242,7 @@ func (c *CPU) decReg8(dst func(byte), srcGet func() byte) int {
 	c.registers.SetFlagZ(res == 0)
 	c.registers.SetFlagN(true)
 	c.registers.SetFlagH(hBorrow)
-	dst(res)
+	*reg = res
 	return 1
 }
 
@@ -277,9 +277,9 @@ func (c *CPU) incHLPtr() int {
 // inc8Reg8 handles INC r8
 // Increment the value in r8
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 0, H (Set if bit 3 overflow)
-func (c *CPU) incReg8(dst func(byte), srcGet func() byte) int {
+func (c *CPU) incReg8(reg *byte) int {
 
-	value := srcGet()
+	value := *reg
 
 	hCarry := (value & 0x0F) == 0x0F
 	res := value + 1
@@ -287,7 +287,7 @@ func (c *CPU) incReg8(dst func(byte), srcGet func() byte) int {
 	c.registers.SetFlagZ(res == 0)
 	c.registers.SetFlagN(false)
 	c.registers.SetFlagH(hCarry)
-	dst(res)
+	*reg = res
 
 	return 1
 }
@@ -341,8 +341,8 @@ func (c *CPU) sbcAImm8(srcVal byte) int {
 // sbc8AReg8 handles SBC A, r8
 // Subtract the value in r8 plus the carry flag from A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src + cy))
-func (c *CPU) sbcAReg8(srcGet func() byte) int {
-	value := int(srcGet())
+func (c *CPU) sbcAReg8(srcVal byte) int {
+	value := int(srcVal)
 	cy := int(c.registers.FlagCyBit())
 	a := int(c.registers.A)
 
@@ -409,8 +409,8 @@ func (c *CPU) subAImm8(srcVal byte) int {
 // sub8AReg8 handles SUB A, r8
 // Subtract the value in r8 from A
 // cycles 1 | bytes 1 | flags Z (Set if result 0), N 1, H (Set if borrow from bit 4), C (Set if borrow (A < src))
-func (c *CPU) subAReg8(srcGet func() byte) int {
-	value := int(srcGet())
+func (c *CPU) subAReg8(srcVal byte) int {
+	value := int(srcVal)
 	a := int(c.registers.A)
 
 	res := a - value
